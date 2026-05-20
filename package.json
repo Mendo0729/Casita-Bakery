@@ -1,0 +1,20 @@
+{
+  "name": "casita-bakery",
+  "version": "1.0.0",
+  "description": "Pagina de prueba para el catalogo de productos de Casita Bakery",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "bakery",
+    "node",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
