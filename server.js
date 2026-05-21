@@ -1,34 +1,18 @@
-const path = require("path");
-const express = require("express");
-
-const app = express();
+const app = require("./src/app");
 const PORT = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("/api/products", (req, res) => {
-  res.json([
-    {
-      id: 1,
-      name: "Pan artesanal",
-      description: "Pan recien horneado con corteza crujiente.",
-      price: 3.5
-    },
-    {
-      id: 2,
-      name: "Cupcake de vainilla",
-      description: "Bizcocho suave con crema de vainilla.",
-      price: 2.25
-    },
-    {
-      id: 3,
-      name: "Cheesecake de fresa",
-      description: "Porcion cremosa con salsa de fresa.",
-      price: 4.75
-    }
-  ]);
+const server = app.listen(PORT, () => {
+  console.log(`Casita Bakery Web running at http://localhost:${PORT}`);
 });
 
-app.listen(PORT, () => {
-  console.log(`Casita Bakery disponible en http://localhost:${PORT}`);
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`Port ${PORT} is already in use.`);
+    console.error("Close the process using that port or start the app with another PORT value.");
+    process.exit(1);
+  }
+
+  console.error("Failed to start Casita Bakery Web.");
+  console.error(error);
+  process.exit(1);
 });
