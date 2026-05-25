@@ -1,6 +1,7 @@
 const express = require("express");
 
 const { publicPath, viewsPath } = require("./config/paths.config");
+const apiRoutes = require("./routes/api.routes");
 const catalogRoutes = require("./routes/catalogRoutes");
 const { notFoundHandler } = require("./middlewares/not-found.middleware");
 const { errorHandler } = require("./middlewares/error.middleware");
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(publicPath));
 
+app.use("/api", apiRoutes);
 app.use("/", catalogRoutes);
 
 app.use(notFoundHandler);

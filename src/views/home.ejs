@@ -4,13 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/images/Logo.png">
+    <link rel="apple-touch-icon" href="/images/Logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
+    <button id="btn-carrito" class="cart-floating-button" type="button" aria-label="Abrir carrito" aria-controls="carrito-panel" aria-expanded="false">
+      <span class="cart-floating-icon" aria-hidden="true">&#128722;</span>
+      <span id="carrito-contador" class="cart-floating-count">0</span>
+    </button>
+
     <main class="page-shell">
       <header class="page-header">
+        <img class="brand-banner" src="/images/Casita-bakery-banner.png" alt="Casita Bakery">
         <span class="page-kicker">Hecho en casa</span>
-        <h1><%= title %></h1>
         <p><%= subtitle %></p>
         <% if (products && products.length > 0) { %>
           <span class="product-count"><%= products.length %> postres disponibles</span>
@@ -21,10 +31,27 @@
         <% if (!products || products.length === 0) { %>
           <p class="empty-message">Pronto tendremos postres disponibles.</p>
         <% } else { %>
+          <section id="filtros-categorias" class="category-filters" aria-label="Filtrar productos por categoria">
+            <button class="category-filter is-active" type="button" data-categoria="Todos">Todos</button>
+            <button class="category-filter" type="button" data-categoria="Galletas">Galletas</button>
+            <button class="category-filter" type="button" data-categoria="Brownies">Brownies</button>
+            <button class="category-filter" type="button" data-categoria="Cheesecake">Cheesecake</button>
+            <button class="category-filter" type="button" data-categoria="Cinnamon Rolls">Cinnamon Rolls</button>
+          </section>
+
           <section class="product-grid" aria-label="Catalogo de productos">
-            <% products.forEach((product) => { %>
-              <article class="product-card">
-                <img class="product-image" src="<%= product.imagen_url %>" alt="<%= product.nombre %>">
+            <% products.forEach((product, index) => { %>
+              <article class="product-card" data-categoria="<%= product.categoria || '' %>">
+                <img
+                  class="product-image"
+                  src="<%= product.imagen_url %>"
+                  alt="<%= product.nombre %>"
+                  width="700"
+                  height="520"
+                  loading="<%= index < 3 ? 'eager' : 'lazy' %>"
+                  decoding="async"
+                  fetchpriority="<%= index === 0 ? 'high' : 'auto' %>"
+                >
                 <div class="product-info">
                   <span class="product-status">Disponible</span>
                   <div class="product-copy">
@@ -47,18 +74,79 @@
             <% }) %>
           </section>
         <% } %>
-
-        <aside class="cart-section" aria-labelledby="cart-title">
-          <div class="cart-header">
-            <h2 id="cart-title">Mi pedido</h2>
-            <span id="carrito-contador" class="cart-counter">0 productos</span>
-          </div>
-          <div id="carrito-items" class="cart-items">
-            <p class="cart-empty">Tu pedido está vacío.</p>
-          </div>
-        </aside>
       </div>
     </main>
+
+    <div id="carrito-overlay" class="cart-overlay" hidden></div>
+
+    <aside id="carrito-panel" class="cart-drawer" aria-labelledby="cart-title" aria-hidden="true" inert>
+      <div class="cart-drawer-header">
+        <h2 id="cart-title">Mi pedido</h2>
+        <button class="cart-close-button" type="button" aria-label="Cerrar carrito">X</button>
+      </div>
+
+      <div id="carrito-items" class="cart-items">
+        <p class="cart-empty">Tu pedido est&aacute; vac&iacute;o.</p>
+      </div>
+
+      <div class="cart-total-row">
+        <span>Total</span>
+        <strong id="carrito-total">$0.00</strong>
+      </div>
+
+      <button id="btn-continuar-pedido" class="cart-continue-button" type="button" disabled>Continuar pedido</button>
+    </aside>
+
+    <div id="pedido-modal-overlay" class="order-modal-overlay" hidden></div>
+
+    <section id="pedido-modal" class="order-modal" aria-labelledby="pedido-modal-title" aria-hidden="true" inert>
+      <div class="order-modal-header">
+        <h2 id="pedido-modal-title">Datos del pedido</h2>
+        <button class="order-modal-close" type="button" aria-label="Cerrar formulario">X</button>
+      </div>
+
+      <form id="pedido-form" class="order-form">
+        <div class="order-form-field">
+          <label for="cliente-nombre">Nombre <span aria-hidden="true">*</span></label>
+          <input id="cliente-nombre" name="nombre" type="text" autocomplete="name">
+          <p id="error-nombre" class="form-error"></p>
+        </div>
+
+        <div class="order-form-field">
+          <label for="cliente-telefono">Tel&eacute;fono <span aria-hidden="true">*</span></label>
+          <input id="cliente-telefono" name="telefono" type="tel" autocomplete="tel">
+          <p id="error-telefono" class="form-error"></p>
+        </div>
+
+        <div class="order-form-field">
+          <label for="cliente-direccion">Direcci&oacute;n <span aria-hidden="true">*</span></label>
+          <input id="cliente-direccion" name="direccion" type="text" autocomplete="street-address">
+          <p id="error-direccion" class="form-error"></p>
+        </div>
+
+        <div class="order-form-field">
+          <label for="cliente-notas">Notas</label>
+          <textarea id="cliente-notas" name="notas" rows="3"></textarea>
+        </div>
+
+        <button id="btn-enviar-pedido" class="order-submit-button" type="submit">Enviar pedido</button>
+        <p id="error-general" class="form-error form-error-general"></p>
+        <p id="pedido-estado" class="order-status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <div id="pedido-carga-overlay" class="order-progress-overlay" hidden></div>
+
+    <section id="pedido-carga-modal" class="order-progress-modal" aria-live="polite" aria-hidden="true" inert>
+      <div id="pedido-carga-icono" class="order-progress-icon">
+        <span class="order-spinner" aria-hidden="true"></span>
+      </div>
+      <h2 id="pedido-carga-titulo">Estamos guardando tu pedido...</h2>
+      <p id="pedido-carga-texto">Un momento mientras registramos los detalles.</p>
+      <button id="pedido-carga-accion" class="order-progress-action" type="button" hidden>Volver al formulario</button>
+    </section>
+
+    <script src="/js/config.js"></script>
     <script src="/js/main.js"></script>
   </body>
 </html>
