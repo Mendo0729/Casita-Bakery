@@ -12,10 +12,10 @@ async function testConnection() {
       limit 1
     `);
 
-    console.log("PostgreSQL local connection test successful.");
+    console.log("PostgreSQL connection test successful.");
     console.log(`Productos encontrados en prueba: ${rows.length}`);
   } catch (error) {
-    console.error("PostgreSQL local connection test failed.");
+    console.error("PostgreSQL connection test failed.");
     console.error(error.message);
     process.exitCode = 1;
   } finally {

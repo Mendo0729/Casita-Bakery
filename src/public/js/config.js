@@ -1,4 +1,4 @@
 window.CASITA_CONFIG = {
-  ambiente: "development",
-  pedidosEndpoint: "http://localhost:3000/api/pedidos"
+  ambiente: window.location.hostname === "localhost" ? "development" : "production",
+  pedidosEndpoint: "/api/pedidos"
 };

@@ -31,12 +31,14 @@
         <% if (!products || products.length === 0) { %>
           <p class="empty-message">Pronto tendremos postres disponibles.</p>
         <% } else { %>
+          <%
+            const categorias = [...new Set(products.map((product) => product.categoria).filter(Boolean))];
+          %>
           <section id="filtros-categorias" class="category-filters" aria-label="Filtrar productos por categoria">
             <button class="category-filter is-active" type="button" data-categoria="Todos">Todos</button>
-            <button class="category-filter" type="button" data-categoria="Galletas">Galletas</button>
-            <button class="category-filter" type="button" data-categoria="Brownies">Brownies</button>
-            <button class="category-filter" type="button" data-categoria="Cheesecake">Cheesecake</button>
-            <button class="category-filter" type="button" data-categoria="Cinnamon Rolls">Cinnamon Rolls</button>
+            <% categorias.forEach((categoria) => { %>
+              <button class="category-filter" type="button" data-categoria="<%= categoria %>"><%= categoria %></button>
+            <% }) %>
           </section>
 
           <section class="product-grid" aria-label="Catalogo de productos">

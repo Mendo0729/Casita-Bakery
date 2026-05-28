@@ -7,8 +7,8 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "db:create": "psql -U postgres -f src/db/database.sql",
-    "db:schema": "psql -U postgres -d casitabakery -f src/db/schema.sql",
-    "db:seed": "psql -U postgres -d casitabakery -f src/db/seed.sql",
+    "db:schema": "node src/db/runSqlFile.js schema",
+    "db:seed": "node src/db/runSqlFile.js seed",
     "db:test": "node src/db/testConnection.js"
   },
   "keywords": [
