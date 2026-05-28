@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/images/Logo.png">
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body class="admin-auth-page">
+    <main class="admin-auth-shell">
+      <section class="admin-auth-card" aria-labelledby="admin-login-title">
+        <img class="admin-auth-logo" src="/images/Logo.png" alt="Casita Bakery">
+        <div class="admin-auth-heading">
+          <span class="admin-auth-kicker">Administracion</span>
+          <h1 id="admin-login-title">Ingreso administrativo</h1>
+        </div>
+
+        <% if (error) { %>
+          <p class="admin-auth-error" role="alert"><%= error %></p>
+        <% } %>
+
+        <form class="admin-auth-form" action="/admin/login" method="post">
+          <div class="admin-auth-field">
+            <label for="usuario">Usuario</label>
+            <input id="usuario" name="usuario" type="text" value="<%= user %>" autocomplete="username" required>
+          </div>
+
+          <div class="admin-auth-field">
+            <label for="password">Contrasena</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+          </div>
+
+          <button class="admin-auth-button" type="submit">Entrar</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

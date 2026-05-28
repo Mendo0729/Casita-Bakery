@@ -1,5 +1,6 @@
 const express = require("express");
 
+const { env } = require("./config/env.config");
 const { configureSession } = require("./config/session.config");
 const { publicPath, viewsPath } = require("./config/paths.config");
 const adminRoutes = require("./routes/admin.routes");
@@ -12,6 +13,10 @@ const app = express();
 
 app.set("view engine", "ejs");
 app.set("views", viewsPath);
+
+if (env.nodeEnv === "production") {
+  app.set("trust proxy", 1);
+}
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

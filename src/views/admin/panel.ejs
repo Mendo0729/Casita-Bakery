@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/images/Logo.png">
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body class="admin-panel-page">
+    <main class="admin-panel-shell">
+      <section class="admin-panel-card" aria-labelledby="admin-panel-title">
+        <span class="admin-auth-kicker">Administracion</span>
+        <h1 id="admin-panel-title">Panel administrativo Casita Bakery</h1>
+        <p>Bienvenido, <strong><%= adminUser %></strong></p>
+        <a class="admin-logout-link" href="/admin/logout">Cerrar sesion</a>
+      </section>
+    </main>
+  </body>
+</html>
