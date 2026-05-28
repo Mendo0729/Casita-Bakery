@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css?v=<%= assetVersion %>">
   </head>
   <body>
     <button id="btn-carrito" class="cart-floating-button" type="button" aria-label="Abrir carrito" aria-controls="carrito-panel" aria-expanded="false">
@@ -148,7 +148,7 @@
       <button id="pedido-carga-accion" class="order-progress-action" type="button" hidden>Volver al formulario</button>
     </section>
 
-    <script src="/js/config.js"></script>
-    <script src="/js/main.js"></script>
+    <script src="/js/config.js?v=<%= assetVersion %>" defer></script>
+    <script src="/js/main.js?v=<%= assetVersion %>" defer></script>
   </body>
 </html>
