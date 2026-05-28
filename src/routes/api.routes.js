@@ -1,10 +1,8 @@
 const express = require("express");
+const { createOrder } = require("../controllers/order.controller");
 
 const router = express.Router();
 
-// Future API routes:
-// router.use("/products", productRoutes);
-// router.use("/orders", orderRoutes);
-// router.use("/analytics", analyticsRoutes);
+router.post("/pedidos", createOrder);
 
 module.exports = router;

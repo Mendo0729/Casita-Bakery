@@ -1,26 +1,26 @@
 require("dotenv").config();
 
-const supabase = require("../config/supabaseClient");
+const pool = require("../config/databaseClient");
 
 async function testConnection() {
-  const { data, error } = await supabase
-    .from("productos")
-    .select("id, nombre")
-    .limit(1);
+  try {
+    const { rows } = await pool.query(`
+      select id, nombre
+      from productos
+      where disponible = true
+      order by orden asc
+      limit 1
+    `);
 
-  if (error) {
-    console.error("Supabase connection test failed.");
+    console.log("PostgreSQL connection test successful.");
+    console.log(`Productos encontrados en prueba: ${rows.length}`);
+  } catch (error) {
+    console.error("PostgreSQL connection test failed.");
     console.error(error.message);
     process.exitCode = 1;
-    return;
+  } finally {
+    await pool.end();
   }
-
-  console.log("Supabase connection test successful.");
-  console.log(`Productos encontrados en prueba: ${data.length}`);
 }
 
-testConnection().catch((error) => {
-  console.error("Unexpected Supabase connection test error.");
-  console.error(error.message);
-  process.exitCode = 1;
-});
+testConnection();
