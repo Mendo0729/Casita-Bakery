@@ -2,14 +2,30 @@ const express = require("express");
 
 const { requireAdmin } = require("../middlewares/require-admin.middleware");
 const { env } = require("../config/env.config");
+const { getAdminDashboardMetrics } = require("../repositories/admin.repository");
 
 const router = express.Router();
 
-router.get("/", requireAdmin, (req, res) => {
-  res.render("admin/panel", {
-    title: "Panel administrativo | Casita Bakery",
-    adminUser: req.session.adminUser
-  });
+router.get("/", requireAdmin, async (req, res) => {
+  try {
+    const metrics = await getAdminDashboardMetrics();
+
+    res.render("admin/panel", {
+      title: "Panel administrativo | Casita Bakery",
+      adminUser: req.session.adminUser,
+      metrics,
+      metricsError: null
+    });
+  } catch (error) {
+    console.error("No se pudieron cargar las metricas del panel.", error);
+
+    res.render("admin/panel", {
+      title: "Panel administrativo | Casita Bakery",
+      adminUser: req.session.adminUser,
+      metrics: null,
+      metricsError: "No se pudieron cargar las métricas del panel."
+    });
+  }
 });
 
 router.get("/pedidos", requireAdmin, (req, res) => {

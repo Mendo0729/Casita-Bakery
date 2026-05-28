@@ -6,19 +6,69 @@
     <title><%= title %></title>
     <link rel="icon" type="image/png" href="/images/Logo.png">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/admin.css">
   </head>
   <body class="admin-panel-page">
     <main class="admin-panel-shell">
-      <section class="admin-panel-card" aria-labelledby="admin-panel-title">
-        <span class="admin-auth-kicker">Administracion</span>
-        <h1 id="admin-panel-title">Panel administrativo Casita Bakery</h1>
-        <p>Bienvenido, <strong><%= adminUser %></strong></p>
+      <header class="admin-dashboard-header">
+        <div>
+          <span class="admin-auth-kicker">Administracion</span>
+          <h1 id="admin-panel-title">Panel administrativo Casita Bakery</h1>
+          <p>Bienvenido, <strong><%= adminUser %></strong></p>
+        </div>
         <nav class="admin-panel-actions" aria-label="Acciones administrativas">
           <a class="admin-panel-link" href="/admin/pedidos">Ver pedidos</a>
           <a class="admin-panel-link" href="/admin/productos">Administrar productos</a>
           <a class="admin-logout-link" href="/admin/logout">Cerrar sesion</a>
         </nav>
-      </section>
+      </header>
+
+      <% if (metricsError) { %>
+        <p class="admin-dashboard-error" role="alert"><%= metricsError %></p>
+      <% } else { %>
+        <section class="admin-metrics-grid" aria-label="Metricas del panel administrativo">
+          <article class="admin-metric-card">
+            <span>Productos</span>
+            <strong><%= metrics.totalProductos %></strong>
+            <p>Total registrados</p>
+          </article>
+          <article class="admin-metric-card">
+            <span>Disponibles</span>
+            <strong><%= metrics.productosDisponibles %></strong>
+            <p>Productos visibles</p>
+          </article>
+          <article class="admin-metric-card">
+            <span>No disponibles</span>
+            <strong><%= metrics.productosNoDisponibles %></strong>
+            <p>Productos ocultos</p>
+          </article>
+          <article class="admin-metric-card">
+            <span>Pedidos</span>
+            <strong><%= metrics.totalPedidos %></strong>
+            <p>Total recibidos</p>
+          </article>
+          <article class="admin-metric-card">
+            <span>Pendientes</span>
+            <strong><%= metrics.pedidosPendientes %></strong>
+            <p>Por revisar</p>
+          </article>
+          <article class="admin-metric-card">
+            <span>En proceso</span>
+            <strong><%= metrics.pedidosEnProceso %></strong>
+            <p>En preparacion</p>
+          </article>
+          <article class="admin-metric-card">
+            <span>Entregados</span>
+            <strong><%= metrics.pedidosEntregados %></strong>
+            <p>Completados</p>
+          </article>
+          <article class="admin-metric-card">
+            <span>Cancelados</span>
+            <strong><%= metrics.pedidosCancelados %></strong>
+            <p>No completados</p>
+          </article>
+        </section>
+      <% } %>
     </main>
   </body>
 </html>

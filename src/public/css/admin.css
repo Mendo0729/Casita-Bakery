@@ -1,0 +1,108 @@
+.admin-panel-page {
+  min-height: 100vh;
+}
+
+.admin-panel-shell {
+  width: min(100%, 1160px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 32px 18px 52px;
+  place-items: stretch;
+}
+
+.admin-dashboard-header {
+  display: grid;
+  gap: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  background: rgba(255, 250, 245, 0.96);
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-dashboard-header .admin-auth-kicker {
+  margin: 0 0 12px;
+}
+
+.admin-dashboard-header h1 {
+  margin: 0;
+  color: var(--color-brown-hover);
+  font-size: 2.35rem;
+  line-height: 1.05;
+}
+
+.admin-dashboard-header p {
+  margin: 12px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 1.05rem;
+}
+
+.admin-dashboard-error {
+  border: 1px solid rgba(139, 62, 47, 0.22);
+  border-radius: var(--radius-soft);
+  margin: 22px 0 0;
+  padding: 16px;
+  color: var(--color-brown-hover);
+  background: rgba(231, 207, 210, 0.62);
+  font-weight: 800;
+}
+
+.admin-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.admin-metric-card {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-soft);
+  padding: 20px;
+  background: rgba(255, 250, 245, 0.96);
+  box-shadow: 0 12px 30px rgba(111, 47, 35, 0.08);
+}
+
+.admin-metric-card span {
+  color: var(--color-brown);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.admin-metric-card strong {
+  color: var(--color-brown-hover);
+  font-family: var(--font-heading);
+  font-size: 2.8rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.admin-metric-card p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+@media (min-width: 640px) {
+  .admin-panel-shell {
+    padding: 42px 30px 72px;
+  }
+
+  .admin-dashboard-header {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    align-items: center;
+  }
+
+  .admin-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 980px) {
+  .admin-metrics-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
