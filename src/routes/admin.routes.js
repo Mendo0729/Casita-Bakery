@@ -12,8 +12,16 @@ router.get("/", requireAdmin, (req, res) => {
   });
 });
 
+router.get("/pedidos", requireAdmin, (req, res) => {
+  res.type("text").send("Pedidos administrativos pendiente");
+});
+
+router.get("/productos", requireAdmin, (req, res) => {
+  res.type("text").send("Productos administrativos pendiente");
+});
+
 router.get("/login", (req, res) => {
-  if (req.session && req.session.admin) {
+  if (req.session && req.session.admin === true) {
     res.redirect("/admin");
     return;
   }
@@ -63,13 +71,25 @@ router.post("/login", (req, res, next) => {
 });
 
 router.get("/logout", (req, res, next) => {
+  const cookieOptions = {
+    httpOnly: true,
+    secure: env.nodeEnv === "production",
+    sameSite: "lax"
+  };
+
+  if (!req.session) {
+    res.clearCookie("connect.sid", cookieOptions);
+    res.redirect("/admin/login");
+    return;
+  }
+
   req.session.destroy((error) => {
     if (error) {
       next(error);
       return;
     }
 
-    res.clearCookie("connect.sid");
+    res.clearCookie("connect.sid", cookieOptions);
     res.redirect("/admin/login");
   });
 });

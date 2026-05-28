@@ -1045,6 +1045,7 @@ h3,
 }
 
 .admin-auth-button,
+.admin-panel-link,
 .admin-logout-link {
   display: inline-flex;
   align-items: center;
@@ -1063,12 +1064,19 @@ h3,
     transform 180ms ease;
 }
 
+.admin-panel-actions {
+  display: grid;
+  gap: 12px;
+}
+
 .admin-auth-button:hover,
+.admin-panel-link:hover,
 .admin-logout-link:hover {
   background: var(--color-brown-hover);
   transform: translateY(-1px);
 }
 
+.admin-panel-link,
 .admin-logout-link {
   width: 100%;
 }

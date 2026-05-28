@@ -13,7 +13,11 @@
         <span class="admin-auth-kicker">Administracion</span>
         <h1 id="admin-panel-title">Panel administrativo Casita Bakery</h1>
         <p>Bienvenido, <strong><%= adminUser %></strong></p>
-        <a class="admin-logout-link" href="/admin/logout">Cerrar sesion</a>
+        <nav class="admin-panel-actions" aria-label="Acciones administrativas">
+          <a class="admin-panel-link" href="/admin/pedidos">Ver pedidos</a>
+          <a class="admin-panel-link" href="/admin/productos">Administrar productos</a>
+          <a class="admin-logout-link" href="/admin/logout">Cerrar sesion</a>
+        </nav>
       </section>
     </main>
   </body>
