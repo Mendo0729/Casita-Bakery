@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/images/Logo.png">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/admin.css">
+  </head>
+  <body class="admin-panel-page">
+    <main class="admin-panel-shell">
+      <header class="admin-dashboard-header">
+        <div>
+          <span class="admin-auth-kicker">Detalle</span>
+          <h1>Detalle del pedido</h1>
+          <% if (order) { %>
+            <p>Pedido <strong><%= order.idCorto %></strong></p>
+          <% } else { %>
+            <p>Consulta de pedido administrativo</p>
+          <% } %>
+        </div>
+        <nav class="admin-panel-actions" aria-label="Navegacion administrativa">
+          <a class="admin-panel-link" href="/admin/pedidos">Volver a pedidos</a>
+          <a class="admin-panel-link" href="/admin">Volver al dashboard</a>
+          <a class="admin-logout-link" href="/admin/logout">Cerrar sesion</a>
+        </nav>
+      </header>
+
+      <% if (message) { %>
+        <p class="<%= error ? 'admin-dashboard-error' : 'admin-empty-state' %>" role="alert"><%= message %></p>
+      <% } else { %>
+        <section class="admin-detail-grid" aria-label="Informacion del pedido">
+          <article class="admin-detail-card">
+            <h2>Cliente</h2>
+            <dl class="admin-detail-list">
+              <div>
+                <dt>ID completo</dt>
+                <dd><code><%= order.id %></code></dd>
+              </div>
+              <div>
+                <dt>ID corto</dt>
+                <dd><%= order.idCorto %></dd>
+              </div>
+              <div>
+                <dt>Cliente</dt>
+                <dd><%= order.nombre_cliente %></dd>
+              </div>
+              <div>
+                <dt>Telefono</dt>
+                <dd><%= order.telefono %></dd>
+              </div>
+              <div>
+                <dt>Direccion</dt>
+                <dd><%= order.direccion %></dd>
+              </div>
+              <div>
+                <dt>Notas</dt>
+                <dd><%= order.notas %></dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="admin-detail-card">
+            <h2>Pedido</h2>
+            <dl class="admin-detail-list">
+              <div>
+                <dt>Estado</dt>
+                <dd><span class="admin-status-badge admin-status-<%= order.estado %>"><%= order.estado %></span></dd>
+              </div>
+              <div>
+                <dt>Total registrado</dt>
+                <dd><%= totalRegistradoFormateado %></dd>
+              </div>
+              <div>
+                <dt>Total calculado</dt>
+                <dd><%= totalCalculadoFormateado %></dd>
+              </div>
+              <div>
+                <dt>Fecha</dt>
+                <dd><%= order.fechaFormateada %></dd>
+              </div>
+            </dl>
+
+            <% if (totalMismatch) { %>
+              <p class="admin-total-warning" role="alert">Advertencia: el total calculado no coincide con el total registrado.</p>
+            <% } %>
+          </article>
+        </section>
+
+        <section class="admin-orders-section" aria-label="Productos del pedido">
+          <div class="admin-table-wrap">
+            <table class="admin-orders-table admin-detail-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio unitario</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% detail.forEach((item) => { %>
+                  <tr>
+                    <td><%= item.nombre_producto %></td>
+                    <td><%= item.cantidad %></td>
+                    <td><%= item.precioUnitarioFormateado %></td>
+                    <td><%= item.subtotalFormateado %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      <% } %>
+    </main>
+  </body>
+</html>

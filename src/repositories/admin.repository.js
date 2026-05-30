@@ -128,7 +128,51 @@ async function getAdminOrders({ page, pageSize, estado, buscar }) {
   };
 }
 
+async function getAdminOrderDetail(orderId) {
+  const [orderResult, detailResult] = await Promise.all([
+    pool.query(
+      `
+        SELECT
+          id,
+          nombre_cliente,
+          telefono,
+          direccion,
+          notas,
+          estado,
+          total,
+          creado_en
+        FROM pedidos
+        WHERE id = $1;
+      `,
+      [orderId]
+    ),
+    pool.query(
+      `
+        SELECT
+          id,
+          pedido_id,
+          producto_id,
+          nombre_producto,
+          precio_unitario,
+          cantidad,
+          subtotal,
+          creado_en
+        FROM pedido_detalle
+        WHERE pedido_id = $1
+        ORDER BY creado_en ASC;
+      `,
+      [orderId]
+    )
+  ]);
+
+  return {
+    order: orderResult.rows[0] || null,
+    detail: detailResult.rows
+  };
+}
+
 module.exports = {
   getAdminDashboardMetrics,
-  getAdminOrders
+  getAdminOrders,
+  getAdminOrderDetail
 };

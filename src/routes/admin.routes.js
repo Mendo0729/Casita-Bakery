@@ -4,7 +4,8 @@ const { requireAdmin } = require("../middlewares/require-admin.middleware");
 const { env } = require("../config/env.config");
 const {
   getAdminDashboardMetrics,
-  getAdminOrders
+  getAdminOrders,
+  getAdminOrderDetail
 } = require("../repositories/admin.repository");
 
 const router = express.Router();
@@ -73,6 +74,56 @@ function normalizeOrder(order) {
     totalFormateado: `$${Number(order.total).toFixed(2)}`,
     fechaFormateada: formatOrderDate(order.creado_en)
   };
+}
+
+function isValidUuid(value) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function formatCurrency(value) {
+  return `$${Number(value).toFixed(2)}`;
+}
+
+function normalizeOrderDetail(order, detail) {
+  const detailRows = detail.map((item) => ({
+    ...item,
+    precioUnitarioFormateado: formatCurrency(item.precio_unitario),
+    subtotalFormateado: formatCurrency(item.subtotal)
+  }));
+  const totalCalculado = detailRows.reduce(
+    (total, item) => total + Number(item.subtotal),
+    0
+  );
+  const totalRegistrado = Number(order.total);
+
+  return {
+    order: {
+      ...order,
+      idCorto: String(order.id).slice(0, 8),
+      totalFormateado: formatCurrency(totalRegistrado),
+      fechaFormateada: formatOrderDate(order.creado_en),
+      notas: order.notas || "Sin notas"
+    },
+    detail: detailRows,
+    totalCalculado,
+    totalCalculadoFormateado: formatCurrency(totalCalculado),
+    totalRegistrado,
+    totalRegistradoFormateado: formatCurrency(totalRegistrado),
+    totalMismatch: Math.abs(totalCalculado - totalRegistrado) > 0.009
+  };
+}
+
+function renderOrderDetailMessage(res, statusCode, message) {
+  res.status(statusCode).render("admin/order-detail", {
+    title: "Detalle de pedido | Casita Bakery",
+    order: null,
+    detail: [],
+    totalCalculadoFormateado: "$0.00",
+    totalRegistradoFormateado: "$0.00",
+    totalMismatch: false,
+    message,
+    error: statusCode >= 500 ? message : null
+  });
 }
 
 router.get("/", requireAdmin, async (req, res) => {
@@ -167,8 +218,34 @@ router.get("/pedidos", requireAdmin, async (req, res) => {
   }
 });
 
-router.get("/pedidos/:id", requireAdmin, (req, res) => {
-  res.type("text").send("Detalle de pedido pendiente");
+router.get("/pedidos/:id", requireAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  if (!isValidUuid(id)) {
+    renderOrderDetailMessage(res, 400, "ID de pedido inválido.");
+    return;
+  }
+
+  try {
+    const { order, detail } = await getAdminOrderDetail(id);
+
+    if (!order) {
+      renderOrderDetailMessage(res, 404, "Pedido no encontrado.");
+      return;
+    }
+
+    const viewModel = normalizeOrderDetail(order, detail);
+
+    res.render("admin/order-detail", {
+      title: "Detalle de pedido | Casita Bakery",
+      ...viewModel,
+      message: null,
+      error: null
+    });
+  } catch (error) {
+    console.error("No se pudo cargar el detalle del pedido.", error);
+    renderOrderDetailMessage(res, 500, "No se pudo cargar el detalle del pedido.");
+  }
 });
 
 router.get("/productos", requireAdmin, (req, res) => {
