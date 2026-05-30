@@ -1,5 +1,35 @@
 const pool = require("../config/databaseClient");
 
+const ALLOWED_ORDER_STATUSES = new Set([
+  "pendiente",
+  "en_proceso",
+  "entregado",
+  "cancelado"
+]);
+
+function buildOrdersWhereClause(filters) {
+  const conditions = [];
+  const values = [];
+
+  if (ALLOWED_ORDER_STATUSES.has(filters.estado)) {
+    values.push(filters.estado);
+    conditions.push(`estado = $${values.length}`);
+  }
+
+  if (filters.buscar) {
+    values.push(`%${filters.buscar}%`);
+    conditions.push(`(
+      nombre_cliente ILIKE $${values.length}
+      OR telefono ILIKE $${values.length}
+    )`);
+  }
+
+  return {
+    whereClause: conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "",
+    values
+  };
+}
+
 async function getAdminDashboardMetrics() {
   const [
     totalProductosResult,
@@ -57,4 +87,48 @@ async function getAdminDashboardMetrics() {
   };
 }
 
-module.exports = { getAdminDashboardMetrics };
+async function getAdminOrders({ page, pageSize, estado, buscar }) {
+  const { whereClause, values } = buildOrdersWhereClause({ estado, buscar });
+  const paginationValues = [...values, pageSize, (page - 1) * pageSize];
+  const limitParam = values.length + 1;
+  const offsetParam = values.length + 2;
+
+  const [ordersResult, countResult] = await Promise.all([
+    pool.query(
+      `
+        SELECT
+          id,
+          nombre_cliente,
+          telefono,
+          direccion,
+          notas,
+          estado,
+          total,
+          creado_en
+        FROM pedidos
+        ${whereClause}
+        ORDER BY creado_en DESC
+        LIMIT $${limitParam} OFFSET $${offsetParam};
+      `,
+      paginationValues
+    ),
+    pool.query(
+      `
+        SELECT COUNT(*) AS total
+        FROM pedidos
+        ${whereClause};
+      `,
+      values
+    )
+  ]);
+
+  return {
+    orders: ordersResult.rows,
+    total: Number(countResult.rows[0].total)
+  };
+}
+
+module.exports = {
+  getAdminDashboardMetrics,
+  getAdminOrders
+};

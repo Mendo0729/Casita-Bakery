@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/images/Logo.png">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/admin.css">
+  </head>
+  <body class="admin-panel-page">
+    <main class="admin-panel-shell">
+      <header class="admin-dashboard-header">
+        <div>
+          <span class="admin-auth-kicker">Pedidos</span>
+          <h1>Pedidos administrativos</h1>
+          <p>Consulta y filtra los pedidos registrados.</p>
+        </div>
+        <nav class="admin-panel-actions" aria-label="Navegacion administrativa">
+          <a class="admin-panel-link" href="/admin">Volver al dashboard</a>
+          <a class="admin-panel-link" href="/admin/productos">Administrar productos</a>
+          <a class="admin-logout-link" href="/admin/logout">Cerrar sesion</a>
+        </nav>
+      </header>
+
+      <section class="admin-orders-section" aria-label="Filtros de pedidos">
+        <form class="admin-orders-filters" action="/admin/pedidos" method="get">
+          <div class="admin-filter-field">
+            <label for="estado">Estado</label>
+            <select id="estado" name="estado">
+              <option value="todos" <%= filters.estado === "todos" ? "selected" : "" %>>Todos</option>
+              <option value="pendiente" <%= filters.estado === "pendiente" ? "selected" : "" %>>Pendiente</option>
+              <option value="en_proceso" <%= filters.estado === "en_proceso" ? "selected" : "" %>>En proceso</option>
+              <option value="entregado" <%= filters.estado === "entregado" ? "selected" : "" %>>Entregado</option>
+              <option value="cancelado" <%= filters.estado === "cancelado" ? "selected" : "" %>>Cancelado</option>
+            </select>
+          </div>
+
+          <div class="admin-filter-field">
+            <label for="buscar">Buscar cliente o telefono</label>
+            <input id="buscar" name="buscar" type="search" value="<%= filters.buscar %>">
+          </div>
+
+          <button class="admin-auth-button" type="submit">Filtrar</button>
+        </form>
+      </section>
+
+      <% if (error) { %>
+        <p class="admin-dashboard-error" role="alert"><%= error %></p>
+      <% } else if (pedidos.length === 0) { %>
+        <p class="admin-empty-state">No hay pedidos para los filtros seleccionados.</p>
+      <% } else { %>
+        <section class="admin-orders-section" aria-label="Listado de pedidos">
+          <div class="admin-table-wrap">
+            <table class="admin-orders-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Telefono</th>
+                  <th>Direccion</th>
+                  <th>Estado</th>
+                  <th>Total</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% pedidos.forEach((pedido) => { %>
+                  <tr>
+                    <td><code><%= pedido.idCorto %></code></td>
+                    <td><%= pedido.nombre_cliente %></td>
+                    <td><%= pedido.telefono %></td>
+                    <td><%= pedido.direccion %></td>
+                    <td>
+                      <span class="admin-status-badge admin-status-<%= pedido.estado %>"><%= pedido.estado %></span>
+                    </td>
+                    <td><%= pedido.totalFormateado %></td>
+                    <td><%= pedido.fechaFormateada %></td>
+                    <td>
+                      <a class="admin-detail-link" href="/admin/pedidos/<%= pedido.id %>">Ver detalle</a>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      <% } %>
+
+      <nav class="admin-pagination" aria-label="Paginacion de pedidos">
+        <% if (pagination.tienePaginaAnterior) { %>
+          <a class="admin-page-link" href="<%= pagination.paginaAnteriorUrl %>">Anterior</a>
+        <% } else { %>
+          <span class="admin-page-link is-disabled">Anterior</span>
+        <% } %>
+
+        <span class="admin-page-current">
+          Pagina <%= pagination.paginaActual %> de <%= pagination.totalPaginas %>
+        </span>
+
+        <% if (pagination.tienePaginaSiguiente) { %>
+          <a class="admin-page-link" href="<%= pagination.paginaSiguienteUrl %>">Siguiente</a>
+        <% } else { %>
+          <span class="admin-page-link is-disabled">Siguiente</span>
+        <% } %>
+      </nav>
+    </main>
+  </body>
+</html>
