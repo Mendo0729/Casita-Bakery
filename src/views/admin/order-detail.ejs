@@ -85,6 +85,18 @@
             <% if (totalMismatch) { %>
               <p class="admin-total-warning" role="alert">Advertencia: el total calculado no coincide con el total registrado.</p>
             <% } %>
+
+            <form class="admin-status-form" action="/admin/pedidos/<%= order.id %>/estado" method="post">
+              <div class="admin-filter-field">
+                <label for="estado">Cambiar estado</label>
+                <select id="estado" name="estado">
+                  <% estadosPermitidos.forEach((estadoPermitido) => { %>
+                    <option value="<%= estadoPermitido %>" <%= order.estado === estadoPermitido ? "selected" : "" %>><%= estadoPermitido %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <button class="admin-auth-button" type="submit">Actualizar estado</button>
+            </form>
           </article>
         </section>
 

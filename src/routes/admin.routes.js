@@ -5,7 +5,8 @@ const { env } = require("../config/env.config");
 const {
   getAdminDashboardMetrics,
   getAdminOrders,
-  getAdminOrderDetail
+  getAdminOrderDetail,
+  updateAdminOrderStatus
 } = require("../repositories/admin.repository");
 
 const router = express.Router();
@@ -17,6 +18,12 @@ const ALLOWED_ORDER_FILTER_STATUSES = new Set([
   "entregado",
   "cancelado"
 ]);
+const ALLOWED_ORDER_STATUSES = [
+  "pendiente",
+  "en_proceso",
+  "entregado",
+  "cancelado"
+];
 
 function getPositivePage(value) {
   const parsedPage = Number.parseInt(value, 10);
@@ -121,6 +128,7 @@ function renderOrderDetailMessage(res, statusCode, message) {
     totalCalculadoFormateado: "$0.00",
     totalRegistradoFormateado: "$0.00",
     totalMismatch: false,
+    estadosPermitidos: ALLOWED_ORDER_STATUSES,
     message,
     error: statusCode >= 500 ? message : null
   });
@@ -239,12 +247,42 @@ router.get("/pedidos/:id", requireAdmin, async (req, res) => {
     res.render("admin/order-detail", {
       title: "Detalle de pedido | Casita Bakery",
       ...viewModel,
+      estadosPermitidos: ALLOWED_ORDER_STATUSES,
       message: null,
       error: null
     });
   } catch (error) {
     console.error("No se pudo cargar el detalle del pedido.", error);
     renderOrderDetailMessage(res, 500, "No se pudo cargar el detalle del pedido.");
+  }
+});
+
+router.post("/pedidos/:id/estado", requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { estado } = req.body;
+
+  if (!isValidUuid(id)) {
+    renderOrderDetailMessage(res, 400, "ID de pedido inválido.");
+    return;
+  }
+
+  if (!ALLOWED_ORDER_STATUSES.includes(estado)) {
+    renderOrderDetailMessage(res, 400, "Estado inválido.");
+    return;
+  }
+
+  try {
+    const updatedOrder = await updateAdminOrderStatus(id, estado);
+
+    if (!updatedOrder) {
+      renderOrderDetailMessage(res, 404, "Pedido no encontrado.");
+      return;
+    }
+
+    res.redirect(`/admin/pedidos/${updatedOrder.id}`);
+  } catch (error) {
+    console.error("No se pudo actualizar el estado del pedido.", error);
+    renderOrderDetailMessage(res, 500, "No se pudo actualizar el estado del pedido.");
   }
 });
 

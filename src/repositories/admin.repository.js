@@ -171,8 +171,23 @@ async function getAdminOrderDetail(orderId) {
   };
 }
 
+async function updateAdminOrderStatus(orderId, status) {
+  const result = await pool.query(
+    `
+      UPDATE pedidos
+      SET estado = $1
+      WHERE id = $2
+      RETURNING id, estado;
+    `,
+    [status, orderId]
+  );
+
+  return result.rows[0] || null;
+}
+
 module.exports = {
   getAdminDashboardMetrics,
   getAdminOrders,
-  getAdminOrderDetail
+  getAdminOrderDetail,
+  updateAdminOrderStatus
 };
